@@ -1,0 +1,10 @@
+/* more like global style for pages.. */
+html,
+body,
+.app {
+  height: 100vh;
+  /* background: #72767d; */
+  /* background: #eee; */
+  background: linear-gradient(#1488cc, #2b32b2);
+  padding: 1em;
+}
