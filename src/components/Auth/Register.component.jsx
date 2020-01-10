@@ -222,7 +222,7 @@ class Register extends React.Component {
             </Message>
           )}
           <Message>
-            Already a user? <Link to="/login">Login</Link>
+            Already a user?? <Link to="/login">Login</Link>
           </Message>
         </Grid.Column>
       </Grid>
