@@ -1,5 +1,7 @@
 import React from "react";
 import firebase from "../../firebase/firebase";
+import md5 from "md5";
+
 import {
   Grid,
   Form,
@@ -20,7 +22,8 @@ class Register extends React.Component {
     password: "",
     passwordConfirmation: "",
     errors: [],
-    loading: false //will be set to true when actually processing a user
+    loading: false, //will be set to true when actually processing a user
+    usersRef: firebase.database().ref("users")
   };
 
   /*
@@ -53,7 +56,7 @@ class Register extends React.Component {
       this.setState({ errors: errors.concat(error) });
       //indicating we should NOT handle submit
       return false;
-    } else if (this.isPasswordValid(this.state)) {
+    } else if (!this.isPasswordValid(this.state)) {
       //throw error
       error = { message: "Password is invalid" };
       this.setState({ errors: errors.concat(error) });
@@ -114,16 +117,51 @@ class Register extends React.Component {
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(createdUser => {
           console.log(createdUser);
-          this.setState({ loading: false });
+
+          //generate image avatar for users/-we can get this from firebase documentation
+          createdUser.user
+            .updateProfile({
+              displayName: this.state.username,
+              photoURL: `http://gravatar.com/avatar/${md5(
+                createdUser.user.email
+              )}?d=identicon`
+            })
+
+            // .then(() => {
+            //   this.setState({ loading: false });
+            // })
+
+            .then(() => {
+              this.saveUser(createdUser).then(() => {
+                console.log("user saved");
+              });
+            })
+
+            .catch(err => {
+              console.error(err);
+              this.setState({
+                errors: this.state.errors.concat(err),
+                loading: false
+              });
+            });
         })
+
         .catch(err => {
-          console.log(err);
+          console.error(err);
           this.setState({
             errors: this.state.errors.concat(err),
             loading: false
           });
         });
     }
+  };
+
+  //saving user to our db firestore..
+  saveUser = createdUser => {
+    return this.state.usersRef.child(createdUser.user.uid).set({
+      name: createdUser.user.displayName,
+      avatar: createdUser.user.photoURL
+    });
   };
 
   render() {
@@ -142,17 +180,20 @@ class Register extends React.Component {
         <Grid.Column style={{ maxWidth: 450 }}>
           <Header
             style={{ color: "white" }}
-            as="h2"
+            as="h1"
             icon
             color="white"
             textAlign="center"
+            className="icon-name"
           >
             <Icon name="comment outline" color="standard" />
-            Register for COBU
+            COBU
           </Header>
-          <p style={{ fontSize: 12 }}>
-            Community for Software Engineers & Entrepreneurs
+          <p style={{ color: "white" }}>
+            <span style={{ fontSize: 20 }}>Create an account </span> <br />
           </p>
+          <h5 style={{ color: "white" }}>"Community for Software Engineers"</h5>
+
           <Form size="large" onSubmit={this.handleSubmit}>
             <Segment>
               <Form.Input
@@ -222,7 +263,7 @@ class Register extends React.Component {
             </Message>
           )}
           <Message>
-            Already a user?? <Link to="/login">Login</Link>
+            Already a user? <Link to="/login">Login</Link>
           </Message>
         </Grid.Column>
       </Grid>
