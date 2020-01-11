@@ -8,8 +8,7 @@ import {
   Button,
   Header,
   Message,
-  Icon,
-  GridColumn
+  Icon
 } from "semantic-ui-react";
 
 import { Link } from "react-router-dom";
@@ -83,7 +82,7 @@ class Login extends React.Component {
             textAlign="center"
             className="icon-name"
           >
-            <Icon name="comment outline" color="standard" />
+            <Icon name="users" color="standard" />
             COBU
           </Header>
           <p style={{ color: "white" }}>
