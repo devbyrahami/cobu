@@ -20,8 +20,9 @@ class SidePanel extends React.Component {
           color: "white"
         }}
       >
+        {/* We are passing in props to our components tp be used,this needs to be revised */}
         <UserPanel currentUser={currentUser} />
-        <Channels />
+        <Channels currentUser={currentUser} />
       </Menu>
     );
   }
