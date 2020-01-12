@@ -1,16 +1,20 @@
 import React from "react";
 import { Menu, Icon, Modal, Form, Input, Button } from "semantic-ui-react";
 import firebase from "../../firebase/firebase";
+import { connect } from "react-redux";
+import { setCurrentChannel } from "../../redux/actions/index";
 
 class Channels extends React.Component {
   state = {
+    activeChannel: "",
     user: this.props.currentUser,
     channels: [],
     channelName: "",
     channelDetails: "",
     //it goes to firebase => database section => it creates 'channels' within the db
     channelsRef: firebase.database().ref("channels"),
-    modal: false
+    modal: false,
+    firstLoad: true //set first channel by default
   };
 
   componentDidMount() {
@@ -22,8 +26,20 @@ class Channels extends React.Component {
     let loadedChannels = [];
     this.state.channelsRef.on("child_added", snap => {
       loadedChannels.push(snap.val());
-      this.setState({ channels: loadedChannels });
+      this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
     });
+  };
+
+  setFirstChannel = () => {
+    //if we check there is channel,then we want to set the first channel as default
+    //below we are grabbing the FIRST channel
+    const firstChannel = this.state.channels[0];
+    if (this.state.firstLoad && this.state.channels.length > 0) {
+      this.props.setCurrentChannel(firstChannel);
+      this.setActiveChannel(firstChannel);
+    }
+    //if there is 0 Channels
+    this.setState({ firstLoad: false });
   };
 
   addChannel = () => {
@@ -71,15 +87,27 @@ class Channels extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
+  //channel = each element of channel user will be clicking..
+  changeChannel = channel => {
+    this.setActiveChannel(channel);
+    this.props.setCurrentChannel(channel);
+  };
+
+  setActiveChannel = channel => {
+    this.setState({ activeChannel: channel.id });
+  };
+
   //we are taking all the channels we have in state and display them
   displayChannels = channels =>
     channels.length > 0 &&
     channels.map(channel => (
       <Menu.Item
         key={channel.id}
-        onClick={() => console.log(channel)}
+        onClick={() => this.changeChannel(channel)}
         name={channel.name}
         style={{ opacity: 0.7 }}
+        //this will highlight the selected channel,thru id matching
+        active={channel.id === this.state.activeChannel}
       >
         #{channel.name}
       </Menu.Item>
@@ -144,4 +172,5 @@ class Channels extends React.Component {
   }
 }
 
-export default Channels;
+//we destructure from mapDispatchToProps
+export default connect(null, { setCurrentChannel })(Channels);
