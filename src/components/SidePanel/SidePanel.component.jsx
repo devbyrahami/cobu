@@ -1,6 +1,7 @@
 import React from "react";
 import { Menu } from "semantic-ui-react";
 import UserPanel from "../UserPanel/UserPanel.component";
+import Channels from "./Channels.component";
 
 //needs to fix this later to avoid props drilling
 class SidePanel extends React.Component {
@@ -20,6 +21,7 @@ class SidePanel extends React.Component {
         }}
       >
         <UserPanel currentUser={currentUser} />
+        <Channels />
       </Menu>
     );
   }
