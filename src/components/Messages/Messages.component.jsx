@@ -12,7 +12,11 @@ class Messages extends React.Component {
     messages: [],
     messagesLoading: true,
     channel: this.props.currentChannel,
-    user: this.props.currentUser
+    user: this.props.currentUser,
+    numUniqueUsers: "",
+    searchTerm: "",
+    searchLoading: false,
+    searchResults: []
   };
 
   componentDidMount() {
@@ -37,7 +41,57 @@ class Messages extends React.Component {
         messages: loadedMessages,
         messagesLoading: false
       });
+      this.countUniqueUsers(loadedMessages);
     });
+  };
+
+  //filtering all the messages user's searching for..
+  handleSearchMessages = () => {
+    //we retreiving all the users messages
+    const channelMessages = [...this.state.messages];
+    const regex = new RegExp(this.state.searchTerm, "gi");
+    const searchResults = channelMessages.reduce((acc, message) => {
+      //we check if it matches regex,if so then we will push searched message to the accumulator
+      if (
+        (message.content && message.content.match(regex)) ||
+        message.user.name.match(regex)
+      ) {
+        acc.push(message);
+      }
+      return acc;
+    }, []);
+    //then we placed it our searchResults array of messages,user's searched for []
+    this.setState({ searchResults });
+
+    //showing the loading when user's search after 1secs
+    setTimeout(() => {
+      this.setState({ searchLoading: false });
+    }, 1000);
+  };
+
+  //retrieve the user's search input and show loading while waiting for the input searched..
+  handleSearchChange = e => {
+    this.setState(
+      { searchTerm: e.target.value, searchLoading: true },
+
+      () => this.handleSearchMessages()
+    );
+  };
+
+  countUniqueUsers = messages => {
+    const uniqueUsers = messages.reduce((acc, message) => {
+      if (!acc.includes(message.user.name)) {
+        acc.push(message.user.name);
+      }
+      return acc;
+    }, []);
+
+    // check if user is more than 1 or === 1
+    const plural = uniqueUsers.length > 1 || uniqueUsers.length === 0;
+
+    //if user is more than 1,we add 's' at the back,else only show 'user'
+    const numUniqueUsers = `${uniqueUsers.length} user${plural ? "s" : ""}`;
+    this.setState({ numUniqueUsers });
   };
 
   displayMessages = messages =>
@@ -54,14 +108,30 @@ class Messages extends React.Component {
   displayChannelName = channel => (channel ? `#${channel.name}` : "");
 
   render() {
-    const { messagesRef, channel, user, messages } = this.state;
+    const {
+      messagesRef,
+      channel,
+      user,
+      messages,
+      numUniqueUsers,
+      searchTerm,
+      searchResults,
+      searchLoading
+    } = this.state;
 
     return (
       <React.Fragment>
-        <MessagesHeader channelName={this.displayChannelName(channel)} />
+        <MessagesHeader
+          channelName={this.displayChannelName(channel)}
+          numUniqueUsers={numUniqueUsers}
+          handleSearchChange={this.handleSearchChange}
+          searchLoading={searchLoading}
+        />
         <Segment>
           <Comment.Group className="messages">
-            {this.displayMessages(messages)}
+            {searchTerm
+              ? this.displayMessages(searchResults)
+              : this.displayMessages(messages)}
           </Comment.Group>
         </Segment>
 
