@@ -8,3 +8,29 @@ body,
   background: linear-gradient(#1488cc, #2b32b2);
   padding: 1em;
 }
+
+/* messages */
+.messages {
+  height: 440px;
+  /* overflow on the y-axis,then it will allow to scroll */
+  overflow-y: scroll;
+}
+
+/* messagesform */
+.message__form {
+  /* here should be !IMPORTANT */
+  position: fixed !important;
+  bottom: 1em;
+  /* here should be !IMPORTANT */
+  margin-left: 320px !important;
+  right: 1em;
+  left: 0;
+  z-index: 200;
+}
+
+/* MESSAGE.JS */
+
+.message__self {
+  /* border-left: 2px solid orange; */
+  padding-left: 8px;
+}

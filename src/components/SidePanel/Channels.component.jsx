@@ -21,6 +21,11 @@ class Channels extends React.Component {
     this.addListeners();
   }
 
+  //removing listeners when users going to other parts of the app,and the current component unmount
+  componentWillUnmount() {
+    this.removeListeners();
+  }
+
   //listens for new channels added..
   addListeners = () => {
     let loadedChannels = [];
@@ -28,6 +33,11 @@ class Channels extends React.Component {
       loadedChannels.push(snap.val());
       this.setState({ channels: loadedChannels }, () => this.setFirstChannel());
     });
+  };
+
+  //remove listeners during unmount phase,for performance?
+  removeListeners = () => {
+    this.state.channelsRef.off();
   };
 
   setFirstChannel = () => {
