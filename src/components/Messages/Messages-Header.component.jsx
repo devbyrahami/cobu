@@ -3,6 +3,7 @@ import { Header, Segment, Input, Icon } from "semantic-ui-react";
 
 class MessagesHeader extends React.Component {
   render() {
+    const { channelName } = this.props;
     return (
       <Segment clearing>
         {/* channel title */}
@@ -13,8 +14,13 @@ class MessagesHeader extends React.Component {
           styles={{ marginBottom: 0 }}
         >
           <span>
-            Channel
-            <Icon name={"star outline"} color="black" />
+            {channelName}
+            <Icon
+              name={"star outline "}
+              color="black"
+              size="small"
+              style={{ margin: "0 5px" }}
+            />
           </span>
           <Header.Subheader>Users</Header.Subheader>
         </Header>

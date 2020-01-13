@@ -50,12 +50,15 @@ class Messages extends React.Component {
       />
     ));
 
+  //dynamically show channel's name
+  displayChannelName = channel => (channel ? `#${channel.name}` : "");
+
   render() {
     const { messagesRef, channel, user, messages } = this.state;
 
     return (
       <React.Fragment>
-        <MessagesHeader />
+        <MessagesHeader channelName={this.displayChannelName(channel)} />
         <Segment>
           <Comment.Group className="messages">
             {this.displayMessages(messages)}
