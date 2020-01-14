@@ -191,7 +191,7 @@ class Register extends React.Component {
           <p style={{ color: "white" }}>
             <span style={{ fontSize: 20 }}>Create an account </span> <br />
           </p>
-          <h5 style={{ color: "white" }}>"Community for Software Engineers"</h5>
+          <h5 style={{ color: "white" }}>"Community for Start-Ups"</h5>
 
           <Form size="large" onSubmit={this.handleSubmit}>
             <Segment>

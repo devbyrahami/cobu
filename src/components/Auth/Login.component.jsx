@@ -88,7 +88,7 @@ class Login extends React.Component {
           <p style={{ color: "white" }}>
             <span style={{ fontSize: 20 }}>Login to Cobu </span> <br />
           </p>
-          <h5 style={{ color: "white" }}>"Community for Software Engineers"</h5>
+          <h5 style={{ color: "white" }}>"Community for Start-Ups"</h5>
 
           <Form size="large" onSubmit={this.handleSubmit}>
             <Segment>

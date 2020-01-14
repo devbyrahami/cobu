@@ -47,13 +47,13 @@ class MessageForm extends React.Component {
   };
 
   sendMessage = () => {
-    const { messagesRef } = this.props;
+    const { getMessagesRef } = this.props;
     const { message, channel } = this.state;
     //we want to verify if there is a message first,only then we submit to firebase onclick
     if (message) {
       this.setState({ loading: true }); //we show loading ui first
 
-      messagesRef
+      getMessagesRef()
         .child(channel.id) // we need the id to specify which CHANNEL FIRST
         .push()
         .set(this.createMessage())
@@ -75,12 +75,21 @@ class MessageForm extends React.Component {
     }
   };
 
+  //determine  which path will the media files goes to PUBLIC OR PRIVATE CHANNEl
+  getPath = () => {
+    if (this.props.isPrivateChannel) {
+      return `chat/private-${this.state.channel.id}`;
+    } else {
+      return "chat/public";
+    }
+  };
+
   uploadFile = (file, metadata) => {
     //this determines which channel to be uploaded by the user..
     const pathToUpload = this.state.channel.id;
-    const ref = this.props.messagesRef;
+    const ref = this.props.getMessagesRef();
     //to create a random strings for the url
-    const filePath = `chat/public/${uuidv4()}.jpg`;
+    const filePath = `${this.getPath()}/${uuidv4()}.jpg`;
 
     this.setState(
       {

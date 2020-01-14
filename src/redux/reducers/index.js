@@ -3,7 +3,8 @@ import { combineReducers } from "redux";
 
 const INITIAL_STATE = {
   currentUser: null,
-  isLoading: true //previously was true
+  isLoading: true, //previously was true
+  isPrivateChannel: false
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -37,6 +38,12 @@ const channelReducer = (state = INITIAL_STATE_CHANNEL, action) => {
       return {
         ...state,
         currentChannel: action.payload.currentChannel
+      };
+
+    case actionTypes.SET_PRIVATE_CHANNEL:
+      return {
+        ...state,
+        isPrivateChannel: action.payload.isPrivateChannel
       };
 
     default:

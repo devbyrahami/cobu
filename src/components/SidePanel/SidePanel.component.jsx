@@ -3,6 +3,9 @@ import { Menu } from "semantic-ui-react";
 import UserPanel from "../UserPanel/UserPanel.component";
 import Channels from "./Channels.component";
 
+import DirectMessages from "./Direct-Messages.component";
+import Starred from "./Starred.component";
+
 //needs to fix this later to avoid props drilling
 class SidePanel extends React.Component {
   render() {
@@ -22,7 +25,9 @@ class SidePanel extends React.Component {
       >
         {/* We are passing in props to our components tp be used,this needs to be revised */}
         <UserPanel currentUser={currentUser} />
+        <Starred />
         <Channels currentUser={currentUser} />
+        <DirectMessages currentUser={currentUser} />
       </Menu>
     );
   }

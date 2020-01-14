@@ -8,11 +8,15 @@ import Message from "./Message.component";
 class Messages extends React.Component {
   state = {
     //this would be add as the name of the db inside firebase
+    privateMessagesRef: firebase.database().ref("privateMessages"),
+    privateChannel: this.props.isPrivateChannel,
     messagesRef: firebase.database().ref("messages"),
     messages: [],
     messagesLoading: true,
+    isChannelStarred: false,
     channel: this.props.currentChannel,
     user: this.props.currentUser,
+    usersRef: firebase.database().ref("users"),
     numUniqueUsers: "",
     searchTerm: "",
     searchLoading: false,
@@ -25,6 +29,7 @@ class Messages extends React.Component {
     //if there is user and channel then we want to add a listener
     if (channel && user) {
       this.addListeners(channel.id);
+      this.addUserStarsListener(channel.id, user.uid);
     }
   }
 
@@ -34,7 +39,8 @@ class Messages extends React.Component {
 
   addMessageListener = channelId => {
     let loadedMessages = [];
-    this.state.messagesRef.child(channelId).on("child_added", snap => {
+    const ref = this.getMessagesRef();
+    ref.child(channelId).on("child_added", snap => {
       loadedMessages.push(snap.val());
       // console.log(loadedMessages);
       this.setState({
@@ -43,6 +49,27 @@ class Messages extends React.Component {
       });
       this.countUniqueUsers(loadedMessages);
     });
+  };
+
+  addUserStarsListener = (channelId, userId) => {
+    this.state.usersRef
+      .child(userId)
+      .child("starred")
+      .once("value")
+      .then(data => {
+        if (data.val() !== null) {
+          const channelIds = Object.keys(data.val());
+          const prevStarred = channelIds.includes(channelId);
+          this.setState({ isChannelStarred: prevStarred });
+        }
+      });
+  };
+
+  getMessagesRef = () => {
+    const { messagesRef, privateMessagesRef, privateChannel } = this.state;
+
+    //if user in a private channel then we'll use the privateref,else in public it will use the public ref to database.
+    return privateChannel ? privateMessagesRef : messagesRef;
   };
 
   //filtering all the messages user's searching for..
@@ -78,6 +105,39 @@ class Messages extends React.Component {
     );
   };
 
+  handleStar = () => {
+    this.setState(
+      prevState => ({
+        isChannelStarred: !prevState.isChannelStarred
+      }),
+      () => this.starChannel()
+    );
+  };
+
+  starChannel = () => {
+    if (this.state.isChannelStarred) {
+      this.state.usersRef.child(`${this.state.user.uid}/starred`).update({
+        [this.state.channel.id]: {
+          name: this.state.channel.name,
+          details: this.state.channel.details,
+          createdBy: {
+            name: this.state.channel.createdBy.name,
+            avatar: this.state.channel.createdBy.avatar
+          }
+        }
+      });
+    } else {
+      this.state.usersRef
+        .child(`${this.state.user.uid}/starred`)
+        .child(this.state.channel.id)
+        .remove(err => {
+          if (err !== null) {
+            console.error(err);
+          }
+        });
+    }
+  };
+
   countUniqueUsers = messages => {
     const uniqueUsers = messages.reduce((acc, message) => {
       if (!acc.includes(message.user.name)) {
@@ -105,7 +165,11 @@ class Messages extends React.Component {
     ));
 
   //dynamically show channel's name
-  displayChannelName = channel => (channel ? `#${channel.name}` : "");
+  displayChannelName = channel => {
+    return channel
+      ? `${this.state.privateChannel ? "@" : "#"}${channel.name}`
+      : "";
+  };
 
   render() {
     const {
@@ -116,7 +180,9 @@ class Messages extends React.Component {
       numUniqueUsers,
       searchTerm,
       searchResults,
-      searchLoading
+      searchLoading,
+      privateChannel,
+      isChannelStarred
     } = this.state;
 
     return (
@@ -126,6 +192,9 @@ class Messages extends React.Component {
           numUniqueUsers={numUniqueUsers}
           handleSearchChange={this.handleSearchChange}
           searchLoading={searchLoading}
+          isPrivateChannel={privateChannel}
+          handleStar={this.handleStar}
+          isChannelStarred={isChannelStarred}
         />
         <Segment>
           <Comment.Group className="messages">
@@ -140,6 +209,8 @@ class Messages extends React.Component {
           messagesRef={messagesRef}
           currentChannel={channel}
           currentUser={user}
+          isPrivateChannel={privateChannel}
+          getMessagesRef={this.getMessagesRef}
         />
       </React.Fragment>
     );
