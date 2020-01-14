@@ -11,6 +11,8 @@
     "mime-types": "^2.1.26",
     "moment": "^2.24.0",
     "react": "^16.12.0",
+    "react-avatar-editor": "^12.0.0-beta.0",
+    "react-color": "^2.18.0",
     "react-dom": "^16.12.0",
     "react-redux": "^7.1.3",
     "react-router-dom": "^5.1.2",

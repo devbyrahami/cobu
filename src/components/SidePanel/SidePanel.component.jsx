@@ -25,7 +25,7 @@ class SidePanel extends React.Component {
       >
         {/* We are passing in props to our components tp be used,this needs to be revised */}
         <UserPanel currentUser={currentUser} />
-        <Starred />
+        <Starred currentUser={currentUser} />
         <Channels currentUser={currentUser} />
         <DirectMessages currentUser={currentUser} />
       </Menu>

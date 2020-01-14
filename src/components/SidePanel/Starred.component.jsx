@@ -6,11 +6,47 @@ import {
 } from "../../redux/actions/index";
 
 import { Menu, Icon } from "semantic-ui-react";
+import firebase from "../../firebase/firebase";
 
 class Starred extends React.Component {
   state = {
+    user: this.props.currentUser,
+    usersRef: firebase.database().ref("users"),
     activeChannel: "",
     starredChannels: []
+  };
+
+  //setting a listener
+  componentDidMount() {
+    if (this.state.user) {
+      this.addListeners(this.state.user.uid);
+    }
+  }
+
+  addListeners = userId => {
+    //it listens to that usersRef whether any new starred channel
+    this.state.usersRef
+      .child(userId)
+      .child("starred")
+      .on("child_added", snap => {
+        const starredChannel = { id: snap.key, ...snap.val() };
+        this.setState({
+          //we put all the exiting data in starredchannels and include latest starred at the very end of the array
+          starredChannels: [...this.state.starredChannels, starredChannel]
+        });
+      });
+
+    this.state.usersRef
+      .child(userId)
+      .child("starred")
+      .on("child_removed", snap => {
+        const channelToRemove = { id: snap.key, ...snap.val() };
+        const filteredChannels = this.state.starredChannels.filter(channel => {
+          return channel.id !== channelToRemove.id;
+        });
+
+        this.setState({ starredChannels: filteredChannels });
+      });
   };
 
   setActiveChannel = channel => {
@@ -44,7 +80,7 @@ class Starred extends React.Component {
         <Menu.Item>
           <span>
             <Icon name="star" />
-            STARRED
+            FAVOURITE
           </span>{" "}
           ({starredChannels.length})
         </Menu.Item>
