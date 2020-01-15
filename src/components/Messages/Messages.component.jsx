@@ -30,18 +30,43 @@ class Messages extends React.Component {
     searchResults: [],
     typingRef: firebase.database().ref("typing"),
     typingUsers: [],
-    connectedRef: firebase.database().ref(".info/connected")
+    connectedRef: firebase.database().ref(".info/connected"),
+    listeners: []
   };
 
   componentDidMount() {
-    const { channel, user } = this.state;
+    const { channel, user, listeners } = this.state;
 
     //if there is user and channel then we want to add a listener
     if (channel && user) {
+      this.removeListeners(listeners);
       this.addListeners(channel.id);
       this.addUserStarsListener(channel.id, user.uid);
     }
   }
+
+  componentWillUnmount() {
+    this.removeListeners(this.state.listeners);
+    this.state.connectedRef.off();
+  }
+
+  removeListeners = listeners => {
+    listeners.forEach(listener => {
+      listener.ref.child(listener.id).off(listener.event);
+    });
+  };
+
+  addToListeners = (id, ref, event) => {
+    const index = this.state.listeners.findIndex(listener => {
+      return (
+        listener.id === id && listener.ref === ref && listener.event === event
+      );
+    });
+    if (index === -1) {
+      const newListener = { id, ref, event };
+      this.setState({ listener: this.state.listeners.concat(newListener) });
+    }
+  };
 
   componentDidUpdate(prevProps, prevState) {
     //to check if there is a new message
@@ -75,6 +100,8 @@ class Messages extends React.Component {
       }
     });
 
+    this.addToListeners(channelId, this.state.typingRef, "child_added");
+
     this.state.typingRef.child(channelId).on("child_removed", snap => {
       const index = typingUsers.findIndex(user => user.id === snap.key);
       if (index !== -1) {
@@ -82,6 +109,9 @@ class Messages extends React.Component {
         this.setState({ typingUsers });
       }
     });
+
+    this.addToListeners(channelId, this.state.typingRef, "child_removed");
+
     this.state.connectedRef.on("value", snap => {
       if (snap.val() === true) {
         this.state.typingRef
@@ -110,6 +140,7 @@ class Messages extends React.Component {
       this.countUniqueUsers(loadedMessages);
       this.countUserPosts(loadedMessages);
     });
+    this.addToListeners(channelId, ref, "child_added");
   };
 
   countUserPosts = messages => {
