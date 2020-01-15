@@ -3,8 +3,7 @@ import { combineReducers } from "redux";
 
 const INITIAL_STATE = {
   currentUser: null,
-  isLoading: true, //previously was true
-  isPrivateChannel: false
+  isLoading: true //previously was true
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
