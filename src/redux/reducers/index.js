@@ -58,10 +58,32 @@ const channelReducer = (state = INITIAL_STATE_CHANNEL, action) => {
   }
 };
 
+const INITIAL_STATE_COLORS = {
+  primaryColor: "#2b32b2",
+  //  background: linear-gradient(#1488cc, #2b32b2);
+  secondaryColor: "#eee"
+};
+
+const colorsReducer = (state = INITIAL_STATE_COLORS, action) => {
+  switch (action.type) {
+    case actionTypes.SET_COLORS:
+      return {
+        //ERROR MAYBE HERE..
+        ...state,
+        primaryColor: action.payload.primaryColor,
+        secondaryColor: action.payload.secondaryColor
+      };
+
+    default:
+      return state;
+  }
+};
+
 //OUR ROOT REDUCER HERE
 const rootReducer = combineReducers({
   user: userReducer,
-  channel: channelReducer
+  channel: channelReducer,
+  colors: colorsReducer
 });
 
 export default rootReducer;
