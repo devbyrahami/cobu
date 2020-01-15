@@ -11,6 +11,7 @@ class MessageForm extends React.Component {
     storageRef: firebase.storage().ref(),
     uploadState: "",
     uploadTask: null,
+    typingRef: firebase.database().ref("typing"),
     percentUploaded: 0,
     message: "",
     channel: this.props.currentChannel,
@@ -48,7 +49,7 @@ class MessageForm extends React.Component {
 
   sendMessage = () => {
     const { getMessagesRef } = this.props;
-    const { message, channel } = this.state;
+    const { message, channel, user, typingRef } = this.state;
     //we want to verify if there is a message first,only then we submit to firebase onclick
     if (message) {
       this.setState({ loading: true }); //we show loading ui first
@@ -60,6 +61,10 @@ class MessageForm extends React.Component {
         //clear field and handle errors..
         .then(() => {
           this.setState({ loading: false, message: "", errors: [] });
+          typingRef
+            .child(channel.id) //saving the user id
+            .child(user.uid)
+            .remove();
         })
         .catch(err => {
           console.error(err);
@@ -150,6 +155,23 @@ class MessageForm extends React.Component {
       });
   };
 
+  handleKeyDown = () => {
+    const { message, typingRef, channel, user } = this.state;
+
+    //checking if there is message,which we stores all users messagges in state..
+    if (message) {
+      typingRef
+        .child(channel.id) //saving the user id
+        .child(user.uid)
+        .set(user.displayName);
+    } else {
+      typingRef
+        .child(channel.id) //saving the user id
+        .child(user.uid)
+        .remove();
+    }
+  };
+
   render() {
     const {
       errors,
@@ -162,6 +184,7 @@ class MessageForm extends React.Component {
     return (
       <Segment className="message__form">
         <Input
+          onKeyDown={this.handleKeyDown}
           fluid
           name="message"
           onChange={this.handleChange}

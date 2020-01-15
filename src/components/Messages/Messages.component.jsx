@@ -8,6 +8,8 @@ import Message from "./Message.component";
 import { connect } from "react-redux";
 import { setUserPosts } from "../../redux/actions/index";
 
+import Typing from "./Typing.component";
+
 class Messages extends React.Component {
   state = {
     //this would be add as the name of the db inside firebase
@@ -220,6 +222,10 @@ class Messages extends React.Component {
             {searchTerm
               ? this.displayMessages(searchResults)
               : this.displayMessages(messages)}
+
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span className="user__typing">john is typing</span> <Typing />
+            </div>
           </Comment.Group>
         </Segment>
 

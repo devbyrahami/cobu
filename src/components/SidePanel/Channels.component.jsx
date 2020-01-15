@@ -29,6 +29,7 @@ class Channels extends React.Component {
     messagesRef: firebase.database().ref("messages"),
     notifications: [],
     modal: false,
+    typingRef: firebase.database().ref("typing"),
     firstLoad: true //set first channel by default
   };
 
@@ -157,6 +158,11 @@ class Channels extends React.Component {
   //channel = each element of channel user will be clicking..
   changeChannel = channel => {
     this.setActiveChannel(channel);
+    //removing the 'typing' ref when we change channel,as we no longer in the current channel
+    this.state.typingRef
+      .child(this.state.channel.id)
+      .child(this.state.user.uid)
+      .remove();
     //remove notifications that user is on
     this.clearNotifications();
     this.props.setCurrentChannel(channel);
