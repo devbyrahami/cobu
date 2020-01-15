@@ -6,6 +6,9 @@ import FileModal from "./File-Modal.component";
 import ProgressBar from "./Progress-Bar.component";
 import uuidv4 from "uuid/v4";
 
+import { Picker, emojiIndex } from "emoji-mart";
+import "emoji-mart/css/emoji-mart.css";
+
 class MessageForm extends React.Component {
   state = {
     storageRef: firebase.storage().ref(),
@@ -18,7 +21,8 @@ class MessageForm extends React.Component {
     user: this.props.currentUser,
     loading: false,
     errors: [],
-    modal: false
+    modal: false,
+    emojiPicker: false
   };
 
   //this for media upload open and closing
@@ -172,6 +176,37 @@ class MessageForm extends React.Component {
     }
   };
 
+  handleTogglePicker = () => {
+    this.setState({ emojiPicker: !this.state.emojiPicker });
+  };
+
+  handleAddEmoji = emoji => {
+    const oldMessage = this.state.message;
+    const newMessage = this.colonToUnicode(`${oldMessage} ${emoji.colons}`);
+    //emojipicker: false ,to close the emoji picker.
+    this.setState({ message: newMessage, emojiPicker: false });
+    setTimeout(
+      () => this.messageInputRef.focus(),
+
+      0
+    );
+  };
+
+  colonToUnicode = message => {
+    return message.replace(/:[A-Za-z0-9_+-]+:/g, x => {
+      x = x.replace(/:/g, "");
+      let emoji = emojiIndex.emojis[x];
+      if (typeof emoji !== "undefined") {
+        let unicode = emoji.native;
+        if (typeof unicode !== "undefined") {
+          return unicode;
+        }
+      }
+      x = ":" + x + ":";
+      return x;
+    });
+  };
+
   render() {
     const {
       errors,
@@ -179,10 +214,20 @@ class MessageForm extends React.Component {
       loading,
       modal,
       uploadState,
-      percentUploaded
+      percentUploaded,
+      emojiPicker
     } = this.state;
     return (
       <Segment className="message__form">
+        {emojiPicker && (
+          <Picker
+            set="apple"
+            onSelect={this.handleAddEmoji}
+            className="emojipicker"
+            title="Select your emoji"
+            emoji="point_up"
+          />
+        )}
         <Input
           onKeyDown={this.handleKeyDown}
           fluid
@@ -190,8 +235,15 @@ class MessageForm extends React.Component {
           onChange={this.handleChange}
           //we added value here as message which equals to '' ,to clear the field
           value={message}
+          ref={node => (this.messageInputRef = node)}
           style={{ marginBottom: "0.7em" }}
-          label={<Button icon={"add"} />}
+          label={
+            <Button
+              icon={emojiPicker ? "close" : "add"}
+              content={emojiPicker ? "Close" : null}
+              onClick={this.handleTogglePicker}
+            />
+          }
           // label={<Button color="blue" icon={"send"} />}
           labelPosition="left"
           placeholder="Write your message"

@@ -124,3 +124,9 @@ body,
     opacity: 0;
   }
 }
+
+/* EMOJI */
+
+.emojipicker {
+  position: absolute;
+}
