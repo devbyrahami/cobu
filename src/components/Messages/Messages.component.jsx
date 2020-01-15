@@ -10,6 +10,8 @@ import { setUserPosts } from "../../redux/actions/index";
 
 import Typing from "./Typing.component";
 
+import Skeleton from "./Skeleton.component";
+
 class Messages extends React.Component {
   state = {
     //this would be add as the name of the db inside firebase
@@ -257,6 +259,15 @@ class Messages extends React.Component {
       </div>
     ));
 
+  displayMessageSkeleton = loading =>
+    loading ? (
+      <React.Fragment>
+        {[...Array(10)].map((_, i) => (
+          <Skeleton key={i} />
+        ))}
+      </React.Fragment>
+    ) : null;
+
   render() {
     const {
       messagesRef,
@@ -269,7 +280,8 @@ class Messages extends React.Component {
       searchLoading,
       privateChannel,
       isChannelStarred,
-      typingUsers
+      typingUsers,
+      messagesLoading
     } = this.state;
 
     return (
@@ -285,6 +297,7 @@ class Messages extends React.Component {
         />
         <Segment>
           <Comment.Group className="messages">
+            {this.displayMessageSkeleton(messagesLoading)}
             {searchTerm
               ? this.displayMessages(searchResults)
               : this.displayMessages(messages)}
