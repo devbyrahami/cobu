@@ -159,7 +159,12 @@ class MessageForm extends React.Component {
       });
   };
 
-  handleKeyDown = () => {
+  handleKeyDown = e => {
+    //if we press enter ,then it will send the message
+    if (e.keyCode === 13 || e.which === 13) {
+      this.sendMessage();
+    }
+
     const { message, typingRef, channel, user } = this.state;
 
     //checking if there is message,which we stores all users messagges in state..
