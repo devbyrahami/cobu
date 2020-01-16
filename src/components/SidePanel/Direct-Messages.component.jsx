@@ -126,8 +126,11 @@ class DirectMessages extends React.Component {
             onClick={() => this.changeChannel(user)}
             style={{ opacity: 0.7, fontStyle: "italic" }}
           >
-            <Icon name="circle" color={this.isUserOnline ? "green" : "red"} />@
-            {user.name}
+            <Icon
+              name="circle"
+              color={this.isUserOnline(user) ? "green" : "red"}
+            />
+            @{user.name}
           </Menu.Item>
         ))}
       </Menu.Menu>
