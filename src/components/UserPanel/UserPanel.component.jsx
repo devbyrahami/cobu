@@ -91,7 +91,7 @@ class UserPanel extends React.Component {
   uploadCroppedImage = () => {
     const { storageRef, userRef, blob, metadata } = this.state;
     storageRef
-      .child(`avatars/user-${userRef.uid}`)
+      .child(`avatars/users/${userRef.uid}`)
       .put(blob, metadata)
       .then(snap => {
         snap.ref.getDownloadURL().then(downloadURL => {
@@ -131,7 +131,7 @@ class UserPanel extends React.Component {
   render() {
     const { user, modal, previewImage, croppedImage, blob } = this.state;
     return (
-      <Grid style={{ background: "#2b32b" }}>
+      <Grid style={{ background: "#2b32b" }} className="userpanel">
         <Grid.Column>
           <Grid.Row style={{ padding: "1.2em", margin: 0 }}>
             <Header

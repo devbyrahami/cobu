@@ -12,7 +12,9 @@ class SidePanel extends React.Component {
     const { currentUser, primaryColor } = this.props;
     return (
       //side panel styling
+
       <Menu
+        className="sidepanel"
         size="large"
         inverted
         fixed="left"

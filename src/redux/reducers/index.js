@@ -78,11 +78,30 @@ const colorsReducer = (state = INITIAL_STATE_COLORS, action) => {
   }
 };
 
+//-----TOGGLESIDEPANEL----
+const INITIAL_STATE_TOGGLE = {
+  hidden: true
+};
+
+const toggleReducer = (state = INITIAL_STATE_TOGGLE, action) => {
+  switch (action.type) {
+    case actionTypes.TOGGLE_SIDE_PANEL:
+      return {
+        ...state,
+        hidden: !state.hidden //if its true,it becomes,false and vice versa.
+      };
+
+    default:
+      return state;
+  }
+};
+
 //OUR ROOT REDUCER HERE
 const rootReducer = combineReducers({
   user: userReducer,
   channel: channelReducer,
-  colors: colorsReducer
+  colors: colorsReducer,
+  toggle: toggleReducer
 });
 
 export default rootReducer;

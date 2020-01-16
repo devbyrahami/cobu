@@ -16,6 +16,10 @@ import firebase from "../../firebase/firebase";
 import { connect } from "react-redux";
 import { setColors } from "../../redux/actions/index";
 
+//---SIDEBARICON
+// import SideBarIcon from "../../components/UserPanel/Sidebar-Icon.component";
+// import SidePanel from "../SidePanel/SidePanel.component";
+
 class ColorPanel extends React.Component {
   state = {
     modal: false,
@@ -108,12 +112,15 @@ class ColorPanel extends React.Component {
       </React.Fragment>
     ));
 
+  // <SideBarIcon />
+  // <Divider />
   render() {
     const { modal, primary, secondary, userColors } = this.state;
-
+    // const { hidden } = this.props;
     return (
       <Sidebar as={Menu} inverted vertical visible width="very thin">
         <Divider />
+
         <Button icon="add" size="small" color="blue" onClick={this.openModal} />
         {this.displayUserColors(userColors)}
         <Modal basic open={modal} onClose={this.closeModal}>
@@ -149,5 +156,15 @@ class ColorPanel extends React.Component {
     );
   }
 }
+
+/*----TOGGLESIDEPANEL---
+const mapStateToProps = state => ({
+  hidden: state.toggle.hidden
+});
+
+
+
+   {hidden ? null : <SidePanel />}
+*/
 
 export default connect(null, { setColors })(ColorPanel);

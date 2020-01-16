@@ -51,3 +51,8 @@ export const setColors = (primaryColor, secondaryColor) => {
     }
   };
 };
+
+//TOGGLESIDEPANEL
+export const toggleSidePanel = () => ({
+  type: actionTypes.TOGGLE_SIDE_PANEL
+});

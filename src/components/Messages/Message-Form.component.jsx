@@ -95,7 +95,7 @@ class MessageForm extends React.Component {
   //determine  which path will the media files goes to PUBLIC OR PRIVATE CHANNEl
   getPath = () => {
     if (this.props.isPrivateChannel) {
-      return `chat/private-${this.state.channel.id}`;
+      return `chat/private/${this.state.channel.id}`;
     } else {
       return "chat/public";
     }

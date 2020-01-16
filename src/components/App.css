@@ -3,25 +3,25 @@ html,
 body,
 .app {
   height: 100vh;
-  /* background: #72767d; */
-  /* background: #eee; */
   background: linear-gradient(#1488cc, #2b32b2);
   padding: 1em;
 }
 
 /* messages */
 .messages {
-  height: 440px;
+  height: 62vh;
   /* overflow on the y-axis,then it will allow to scroll */
   overflow-y: scroll;
 }
 
+media .menu {
+  padding-bottom: 2em;
+}
+
 /* messagesform */
 .message__form {
-  /* here should be !IMPORTANT */
   position: fixed !important;
   bottom: 1em;
-  /* here should be !IMPORTANT */
   margin-left: 320px !important;
   right: 1em;
   left: 0;
@@ -31,8 +31,7 @@ body,
 /* MESSAGE.JS */
 
 .message__self {
-  /* border-left: 2px solid orange; */
-  padding-left: 8px;
+  padding-left: 10px;
 }
 
 .message__image {
@@ -196,3 +195,11 @@ body,
   left: 40px;
   right: 20px;
 }
+
+/* 
+.userpanel {
+  @media screen and (max-width: 800px) {
+    height: 200px;
+    width: 220px;
+  }
+} */
